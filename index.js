@@ -1,9 +1,13 @@
-// index.js
-
 const express = require('express')
+const path = require('path')
 const morgan = require('morgan')
+
 const app = express()
 
+// Middleware para servir el frontend estático
+app.use(express.static(path.join(__dirname, 'build')))
+
+// Middleware para parsear JSON
 app.use(express.json())
 
 // 3.7 - Configuración básica de morgan
@@ -51,11 +55,10 @@ app.delete('/api/persons/:id', (req, res) => {
   res.status(204).end()
 })
 
-// 3.5 - POST new person
+// 3.5 & 3.6 - POST new person con validaciones
 app.post('/api/persons', (req, res) => {
   const body = req.body
 
-  // 3.6 - Validaciones
   if (!body.name || !body.number) {
     return res.status(400).json({ error: 'name or number missing' })
   }
@@ -74,7 +77,7 @@ app.post('/api/persons', (req, res) => {
   res.json(person)
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
